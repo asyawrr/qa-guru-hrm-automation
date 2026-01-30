@@ -1,0 +1,12 @@
+node_modules/
+*.config.js
+.env
+.env.*
+yarn.lock
+package-lock.json
+*.log
+*.jpg
+*.png
+*.jpeg
+*.gif
+*.svg
