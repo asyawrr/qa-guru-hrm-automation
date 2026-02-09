@@ -1,13 +1,19 @@
-import dotenv from 'dotenv';
+import { env } from './env.js';
 
-// Load environment variables from the .env file
-// I created a .env file with lines, where I entered valid user data without quotation marks in each line.
+const isLocalEnv = () => {
+  if (process.env.CI) return true;
+  try {
+    const host = new URL(env.BASE_URL).hostname;
+    return host === 'localhost' || host === '127.0.0.1' || host === 'orangehrm';
+  } catch {
+    return false;
+  }
+};
 
-// TEST_USER_PASSWORD =
-// TEST_USER_USERNAME =
-dotenv.config();
-
+const useLocalCredentials = isLocalEnv();
 export const testUser = {
-  password: process.env.TEST_USER_PASSWORD,
-  username: process.env.TEST_USER_USERNAME
+  username: useLocalCredentials ? process.env.TEST_USER_USERNAME : 'Admin',
+  password: useLocalCredentials ? process.env.TEST_USER_PASSWORD : 'admin123',
+  hiringManagerName: process.env.HIRING_MANAGER_NAME ?? 'Admin',
+  hiringManagerId: process.env.HIRING_MANAGER_ID ?? 1,
 };
