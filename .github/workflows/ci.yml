@@ -1,4 +1,4 @@
-name: CI
+name: CI playwright tests
 
 on:
   push:
@@ -32,6 +32,11 @@ jobs:
       - name: Run installer
         run: docker compose exec -T orangehrm php installer/cli_install.php
 
+      - name: Install npm from package.json
+        run: npm ci
+      - name: install browsers
+        run: npx playwright install --with-deps
+
       - name: Run tests
         id: tests
         continue-on-error: true
@@ -47,42 +52,21 @@ jobs:
         if: always()
         run: npm install -g allure
 
-      - name: Generate Allure report
-        if: always()
-        run: allure generate allure-results -o allure-report || true
-
-      - name: Upload allure-results
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Generate allure 3 report into one file
+        run: npx allure awesome ./allure-results --single-file
         continue-on-error: true
-        with:
-          name: allure-results
-          path: allure-results
-
-      - name: Upload allure-report
         if: always()
-        uses: actions/upload-artifact@v4
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v6.0.0
         continue-on-error: true
-        with:
-          name: allure-report
-          path: allure-report
-
-      - name: Upload playwright-report
         if: always()
-        uses: actions/upload-artifact@v4
-        continue-on-error: true
         with:
-          name: playwright-report
-          path: playwright-report
-
-      - name: Upload test-results
-        if: always()
-        uses: actions/upload-artifact@v4
-        continue-on-error: true
-        with:
-          name: test-results
-          path: test-results
-
+          name: allure single file
+          path: |
+            allure-report/index.html
+            allure-results
+            playwright-report
+            
       - name: Show app logs on failure
         if: failure()
         run: docker compose logs orangehrm db
