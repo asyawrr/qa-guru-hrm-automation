@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mariadb:10.6
+    container_name: orangehrm-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpass
+      MARIADB_DATABASE: orangehrm
+      MARIADB_USER: orangehrm
+      MARIADB_PASSWORD: orangehrm_pass
+    volumes:
+      - orangehrm_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  orangehrm:
+    container_name: orangehrm-app
+    restart: unless-stopped
+    build:
+      context: ./orangehrm      # path for repo clone orangehrm/orangehrm https://github.com/orangehrm/orangehrm
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    volumes:
+      - orangehrm_app:/var/www/html   # Dockerfile declare VOLUME /var/www/html  [oai_citation:1‡SourceForge](https://sourceforge.net/p/orangehrm/code-git/ci/master/tree/Dockerfile)
+
+  # Запуск автотестов: docker compose run tests (или up tests)
+  # BASE_URL=http://orangehrm:80 — из контейнера тестов до приложения по имени сервиса, порт 80 внутри сети
+  tests:
+    build: .
+    env_file: .env
+    environment:
+      BASE_URL: http://orangehrm:80
+      API_BASE_URL: http://orangehrm:80/web/index.php/api/v2
+    depends_on:
+      - orangehrm
+
+volumes:
+  orangehrm_db:
+  orangehrm_app:

@@ -3,10 +3,9 @@ import { BasePage } from './base.page.js';
 export class DashboardPage extends BasePage {
   constructor(page) {
     super(page, '/dashboard/index');
-    this.userDropdown = page.getByRole('button', { name: /dropdown/i }).first();
-    this.sidebar = page.locator('.oxd-sidepanel');
     this.menuPim = page.getByRole('link', { name: 'PIM' });
     this.menuRecruitment = page.getByRole('link', { name: 'Recruitment' });
+    this.sidebar = page.locator('.oxd-sidepanel');
   }
 
   async open() {

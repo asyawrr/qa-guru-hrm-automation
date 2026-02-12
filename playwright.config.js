@@ -1,11 +1,6 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'path';
-
-const root = path.resolve(process.cwd());
-dotenv.config({ path: path.join(root, '.env.example') });
-dotenv.config({ path: path.join(root, '.env') });
+import { env } from './src/config/env.js';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -29,9 +24,7 @@ export default defineConfig({
     ],
   ],
   use: {
-    baseURL:
-      process.env.BASE_URL ||
-      (process.env.CI ? 'http://localhost:8080' : 'https://opensource-demo.orangehrmlive.com'),
+    baseURL: env.BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
