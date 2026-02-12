@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main, ui-tests]
+  pull_request:
+    branches: [main, ui-tests]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start app stack
+        run: docker compose up -d db orangehrm
+
+      - name: Wait for OrangeHRM
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null http://localhost:8080; then
+              echo "App is ready"
+              exit 0
+            fi
+            echo "Waiting for app... ($i/30)"
+            sleep 5
+          done
+          echo "App did not become ready"
+          exit 1
+
+      - name: Run installer
+        run: docker compose exec -T orangehrm php installer/cli_install.php
+
+      - name: Run tests
+        id: tests
+        continue-on-error: true
+        run: |
+          docker compose build tests
+          docker compose run --rm \
+            -v $PWD/allure-results:/app/allure-results \
+            -v $PWD/test-results:/app/test-results \
+            -v $PWD/playwright-report:/app/playwright-report \
+            tests
+
+      - name: Install Allure CLI
+        if: always()
+        run: |
+          wget -q https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz
+          tar -xzf allure-2.29.0.tgz
+          sudo mv allure-2.29.0 /opt/allure
+
+      - name: Generate Allure report
+        if: always()
+        run: /opt/allure/bin/allure generate allure-results -o allure-report --clean || true
+
+      - name: Upload allure-results
+        if: always()
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Upload allure-report
+        if: always()
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Upload playwright-report
+        if: always()
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: playwright-report
+          path: playwright-report
+
+      - name: Upload test-results
+        if: always()
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: test-results
+          path: test-results
+
+      - name: Show app logs on failure
+        if: failure()
+        run: docker compose logs orangehrm db
+
+      - name: Fail job if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
