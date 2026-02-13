@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 # Allure TestOps: tell allurectl where results are on the runner
 env:
-  ALLURE_RESULTS: "allure-results"
+  ALLURE_RESULTS: allure-results
   
 jobs:
   test:
@@ -58,6 +58,14 @@ jobs:
         if: always()
         run: rm -rf allure-results allure-report || true
 
+  # Optional diagnostic: confirm tests image has allure-playwright installed
+      - name: Check allure-playwright dependency inside tests container
+        if: always()
+        continue-on-error: true
+        run: |
+          docker compose build tests
+          docker compose run --rm tests node -p "require('./package.json').devDependencies?.['allure-playwright'] || require('./package.json').dependencies?.['allure-playwright'] || 'NO allure-playwright'"
+
       - name: Run tests
         id: tests
         continue-on-error: true
@@ -75,13 +83,25 @@ jobs:
           #   -v $PWD/playwright-report:/app/playwright-report \
           #   tests
           mkdir -p allure-results test-results playwright-report
-          docker compose build tests
-
           allurectl watch --results ./allure-results -- docker compose run --rm \
             -v $PWD/allure-results:/app/allure-results \
             -v $PWD/test-results:/app/test-results \
             -v $PWD/playwright-report:/app/playwright-report \
             tests
+
+      # Diagnostic: verify results exist on runner (required for autotest creation)
+      - name: Debug allure-results content
+        if: always()
+        run: |
+          echo "PWD=$(pwd)"
+          echo "allure-results:"
+          ls -la allure-results || true
+          echo "Allure JSON files (first 50):"
+          find allure-results -maxdepth 1 -type f -name "*.json" -print | head -n 50 || true
+          echo "result.json count:"
+          find allure-results -maxdepth 1 -type f -name "*-result.json" | wc -l || true
+          echo "container.json count:"
+          find allure-results -maxdepth 1 -type f -name "*-container.json" | wc -l || true      
 
       - name: Install Allure CLI (v3)
         if: always()
