@@ -104,7 +104,7 @@ jobs:
           ALLURE_RESULTS: allure-results
           ALLURE_LAUNCH_NAME: "Playwright CI #${{ github.run_number }}"
         run: |
-          allurectl upload --results ./allure-results
+          allurectl upload ./allure-results
           
       - name: Install Allure CLI (v3)
         if: always()
