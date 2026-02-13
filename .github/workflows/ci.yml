@@ -2,16 +2,26 @@ name: CI playwright tests
 
 on:
   push:
-    branches: [main, ui-tests]
+    branches: [main]
   pull_request:
-    branches: [main, ui-tests]
-
+    branches: [main]
+# Allure TestOps: tell allurectl where results are on the runner
+env:
+  ALLURE_RESULTS: "allure-results"
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+      # Allure TestOps: install + configure allurectl for this workflow run
+      - name: Install and configure allurectl
+        uses: allure-framework/setup-allurectl@v1
+        with:
+          allure-endpoint: ${{ secrets.ALLURE_ENDPOINT }}
+          allure-project-id: ${{ secrets.ALLURE_PROJECT_ID }}
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
 
       - name: Start app stack
         run: docker compose up -d db orangehrm
@@ -34,6 +44,7 @@ jobs:
 
       - name: Install npm from package.json
         run: npm ci
+        
       - name: install browsers
         run: npx playwright install --with-deps
 
@@ -42,7 +53,7 @@ jobs:
         continue-on-error: true
         run: |
           docker compose build tests
-          docker compose run --rm \
+          allurectl watch -- docker compose run --rm \
             -v $PWD/allure-results:/app/allure-results \
             -v $PWD/test-results:/app/test-results \
             -v $PWD/playwright-report:/app/playwright-report \
@@ -53,9 +64,10 @@ jobs:
         run: npm install -g allure
 
       - name: Generate allure 3 report into one file
-        run: npx allure awesome ./allure-results --single-file
-        continue-on-error: true
         if: always()
+        continue-on-error: true
+        run: npx allure awesome ./allure-results --single-file
+        
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v6.0.0
         continue-on-error: true
