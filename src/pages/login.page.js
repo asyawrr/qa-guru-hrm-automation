@@ -3,9 +3,10 @@ import { BasePage } from './base.page.js';
 export class LoginPage extends BasePage {
   constructor(page) {
     super(page, '/auth/login');
+    this.errorAlert = page.getByRole('alert');
     this.loginButton = page.getByRole('button', { name: 'Login' });
-    this.usernameInput = page.getByRole('textbox', { name: 'Username' });
     this.passwordInput = page.getByRole('textbox', { name: 'Password' });
+    this.usernameInput = page.getByRole('textbox', { name: 'Username' });
   }
 
   async open() {

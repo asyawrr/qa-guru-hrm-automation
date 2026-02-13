@@ -11,7 +11,12 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test:ui": "npx playwright test tests/ui",
+    "test:api": "npx playwright test tests/api",
+    "allure:generate": "allure generate allure-results -o allure-report --clean",
+    "allure:serve": "allure serve allure-results",
+    "allure:send": "allure send allure-results --endpoint $ALLURE_ENDPOINT"
   },
   "repository": {
     "type": "git",
@@ -20,7 +25,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/asyawrr/qa-guru-hrm-automation/issues"
   },
@@ -36,7 +41,8 @@
     "prettier": "^3.8.1"
   },
   "dependencies": {
-    "@faker-js/faker": "^10.2.0"
+    "@faker-js/faker": "^10.2.0",
+    "dotenv": "^16.4.5"
   },
   "directories": {
     "test": "tests"

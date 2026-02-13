@@ -1,0 +1,144 @@
+name: CI playwright tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+# Allure TestOps: tell allurectl where results are on the runner
+env:
+  ALLURE_RESULTS: allure-results
+  
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      # Allure TestOps: install + configure allurectl for this workflow run
+      - name: Install and configure allurectl
+        uses: allure-framework/setup-allurectl@v1
+        with:
+          allure-endpoint: ${{ secrets.ALLURE_ENDPOINT }}
+          allure-project-id: ${{ secrets.ALLURE_PROJECT_ID }}
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+
+      - name: Start app stack
+        run: docker compose up -d db orangehrm
+
+      - name: Wait for OrangeHRM
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null http://localhost:8080; then
+              echo "App is ready"
+              exit 0
+            fi
+            echo "Waiting for app... ($i/30)"
+            sleep 5
+          done
+          echo "App did not become ready"
+          exit 1
+
+      - name: Run installer
+        run: docker compose exec -T orangehrm php installer/cli_install.php
+
+      - name: Install npm from package.json
+        run: npm ci
+        
+      - name: install browsers
+        run: npx playwright install --with-deps
+
+      - name: Clean previous Allure results
+        if: always()
+        run: rm -rf allure-results allure-report || true
+
+      - name: Run tests
+        id: tests
+        continue-on-error: true
+        env:
+          ALLURE_RESULTS: ./allure-results
+          ALLURE_ENDPOINT: ${{ secrets.ALLURE_ENDPOINT }}
+          ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+          ALLURE_PROJECT_ID: ${{ secrets.ALLURE_PROJECT_ID }}
+          ALLURE_LAUNCH_NAME: "Playwright CI #${{ github.run_number }}"
+        run: |
+          # docker compose build tests
+          # allurectl watch -- docker compose run --rm \
+          #   -v $PWD/allure-results:/app/allure-results \
+          #   -v $PWD/test-results:/app/test-results \
+          #   -v $PWD/playwright-report:/app/playwright-report \
+          #   tests
+          mkdir -p allure-results test-results playwright-report
+          docker compose build tests
+
+          docker compose run --rm \
+            -v $PWD/allure-results:/app/allure-results \
+            -v $PWD/test-results:/app/test-results \
+            -v $PWD/playwright-report:/app/playwright-report \
+            tests
+
+      # Diagnostic: verify results exist on runner (required for autotest creation)
+      - name: Debug allure-results content
+        if: always()
+        run: |
+          echo "allure-results:"
+          ls -la allure-results || true
+          echo "result.json count:"
+          find allure-results -maxdepth 1 -type f -name "*-result.json" | wc -l || true
+          echo "container.json count:"
+          find allure-results -maxdepth 1 -type f -name "*-container.json" | wc -l || true    
+      
+      # Upload results AFTER tests 
+      - name: Upload results to Allure TestOps
+        if: always()
+        env:
+          ALLURE_ENDPOINT: ${{ secrets.ALLURE_ENDPOINT }}
+          ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+          ALLURE_PROJECT_ID: ${{ secrets.ALLURE_PROJECT_ID }}
+          ALLURE_RESULTS: allure-results
+          ALLURE_LAUNCH_NAME: "Playwright CI #${{ github.run_number }}"
+        run: |
+          allurectl upload ./allure-results
+          
+      - name: Install Allure CLI (v3)
+        if: always()
+        run: npm install -g allure
+
+      - name: Generate allure 3 report into one file
+        if: always()
+        continue-on-error: true
+        run: npx allure awesome ./allure-results --single-file
+        
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v6.0.0
+        continue-on-error: true
+        if: always()
+        with:
+          name: allure single file
+          path: |
+            allure-report/index.html
+            allure-results
+            playwright-report
+            
+      - name: Deploy Allure report to GitHub Pages
+        if: always() && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch')
+        continue-on-error: true
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+          destination_dir: .
+      
+      - name: Show app logs on failure
+        if: failure()
+        run: docker compose logs orangehrm db
+
+      - name: Fail job if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
