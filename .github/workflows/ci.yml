@@ -68,12 +68,6 @@ jobs:
           ALLURE_PROJECT_ID: ${{ secrets.ALLURE_PROJECT_ID }}
           ALLURE_LAUNCH_NAME: "Playwright CI #${{ github.run_number }}"
         run: |
-          # docker compose build tests
-          # allurectl watch -- docker compose run --rm \
-          #   -v $PWD/allure-results:/app/allure-results \
-          #   -v $PWD/test-results:/app/test-results \
-          #   -v $PWD/playwright-report:/app/playwright-report \
-          #   tests
           mkdir -p allure-results test-results playwright-report
           docker compose build tests
 
@@ -81,20 +75,8 @@ jobs:
             -v $PWD/allure-results:/app/allure-results \
             -v $PWD/test-results:/app/test-results \
             -v $PWD/playwright-report:/app/playwright-report \
-            tests
-
-      # Diagnostic: verify results exist on runner (required for autotest creation)
-      - name: Debug allure-results content
-        if: always()
-        run: |
-          echo "allure-results:"
-          ls -la allure-results || true
-          echo "result.json count:"
-          find allure-results -maxdepth 1 -type f -name "*-result.json" | wc -l || true
-          echo "container.json count:"
-          find allure-results -maxdepth 1 -type f -name "*-container.json" | wc -l || true    
+            tests   
       
-      # Upload results AFTER tests 
       - name: Upload results to Allure TestOps
         if: always()
         env:
@@ -133,7 +115,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
-          destination_dir: .
       
       - name: Show app logs on failure
         if: failure()
