@@ -137,9 +137,16 @@ Required repository secrets: `ALLURE_ENDPOINT`, `ALLURE_PROJECT_ID`, `ALLURE_TOK
 
 **Allure report** — Suites, test names, status, duration, steps, and attachments (screenshots, traces). After a run, use `npm run allure:serve` or open the CI artifact / GitHub Pages report.
 
+<img width="910" height="709" alt="SCR-20260214-oolz" src="https://github.com/user-attachments/assets/27cc47d4-dc30-42c5-a4a1-66ad2b18418a" />
+
 **Allure TestOps** — Launches are uploaded via allurectl. View results, trends, and history in the Allure TestOps project.
 
+<img width="1193" height="1003" alt="SCR-20260214-ooau" src="https://github.com/user-attachments/assets/5da68d5e-b568-47d6-a7dc-f55b9ac3157c" />
+
 **Telegram** — The notification includes project name, environment, duration, total/passed/failed/broken/skipped counts, a link to the report (e.g. GitHub Pages), and a donut chart (QuickChart) built from the summary. Implemented in `scripts/send-allure-to-telegram.js` and `scripts/build-chart-url.js`.
+
+<img width="596" height="584" alt="SCR-20260214-onot" src="https://github.com/user-attachments/assets/1a52542d-1a4c-42ae-ac6b-8c996b2fb4dd" />
+
 
 ## How to run
 
