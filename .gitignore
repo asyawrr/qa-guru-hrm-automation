@@ -12,3 +12,4 @@ allure-report
 .DS-store
 tests/extended.spec.js-snapshots
 .env
+.DS_Store

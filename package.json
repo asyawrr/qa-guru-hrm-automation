@@ -16,7 +16,8 @@
     "test:api": "npx playwright test tests/api",
     "allure:generate": "allure generate allure-results -o allure-report --clean",
     "allure:serve": "allure serve allure-results",
-    "allure:send": "allure send allure-results --endpoint $ALLURE_ENDPOINT"
+    "allure:send": "allure send allure-results --endpoint $ALLURE_ENDPOINT",
+    "allure:telegram": "node scripts/send-allure-to-telegram.js"
   },
   "repository": {
     "type": "git",
