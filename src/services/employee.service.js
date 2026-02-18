@@ -1,3 +1,4 @@
+import { test } from '@playwright/test';
 import { ApiClient } from './api-client.js';
 
 export class EmployeeService {
@@ -6,18 +7,22 @@ export class EmployeeService {
   }
 
   async create(employee) {
-    const response = await this.client.post('/pim/employees', {
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      middleName: employee.middleName || '',
-      employeeId: employee.employeeId || '',
+    return test.step('API: create employee', async () => {
+      const response = await this.client.post('/pim/employees', {
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        middleName: employee.middleName || '',
+        employeeId: employee.employeeId || '',
+      });
+      return response;
     });
-    return response;
   }
 
   async getById(empNumber) {
-    const response = await this.client.get(`/pim/employees/${empNumber}`);
-    return response;
+    return test.step('API: get employee by id', async () => {
+      const response = await this.client.get(`/pim/employees/${empNumber}`);
+      return response;
+    });
   }
 
   async delete(empNumber) {

@@ -1,3 +1,4 @@
+import { test } from '@playwright/test';
 import { BasePage } from './base.page.js';
 
 export class LoginPage extends BasePage {
@@ -10,32 +11,35 @@ export class LoginPage extends BasePage {
   }
 
   async open() {
-    await this.goto();
+    await test.step('Open login page', async () => {
+      await this.goto();
+    });
     return this;
   }
 
-  async fillUsername(username) {
+  async #fillUsername(username) {
     await this.usernameInput.click();
     await this.usernameInput.fill(username);
     return this;
   }
 
-  async fillPassword(password) {
+  async #fillPassword(password) {
     await this.passwordInput.click();
     await this.passwordInput.fill(password);
     return this;
   }
 
-  async submit() {
+  async #submit() {
     await this.loginButton.click();
     return this;
   }
 
-
   async login(username, password) {
-    await this.fillUsername(username);
-    await this.fillPassword(password);
-    await this.submit();
+    await test.step('Log in', async () => {
+      await this.#fillUsername(username);
+      await this.#fillPassword(password);
+      await this.#submit();
+    });
     return this;
   }
 }

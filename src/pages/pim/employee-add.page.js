@@ -1,3 +1,4 @@
+import { test } from '@playwright/test';
 import { BasePage } from '../base.page.js';
 
 export class EmployeeAddPage extends BasePage {
@@ -16,41 +17,43 @@ export class EmployeeAddPage extends BasePage {
     return this;
   }
 
-  async fillFirstName(firstName) {
+  async #fillFirstName(firstName) {
     await this.firstNameInput.click();
     await this.firstNameInput.fill(firstName);
     return this;
   }
 
-  async fillLastName(lastName) {
+  async #fillLastName(lastName) {
     await this.lastNameInput.click();
     await this.lastNameInput.fill(lastName);
     return this;
   }
 
-  async fillMiddleName(middleName) {
+  async #fillMiddleName(middleName) {
     await this.middleNameInput.click();
     await this.middleNameInput.fill(middleName);
     return this;
   }
 
-  async fillEmployeeId(id) {
+  async #fillEmployeeId(id) {
     await this.employeeIdInput.click();
     await this.employeeIdInput.fill(id);
     return this;
   }
 
-  async save() {
+  async #save() {
     await this.saveButton.click();
     return this;
   }
 
   async addEmployee(employee) {
-    await this.fillFirstName(employee.firstName);
-    await this.fillLastName(employee.lastName);
-    if (employee.middleName) await this.fillMiddleName(employee.middleName);
-    if (employee.employeeId) await this.fillEmployeeId(employee.employeeId);
-    await this.save();
+    await test.step('Add employee', async () => {
+      await this.#fillFirstName(employee.firstName);
+      await this.#fillLastName(employee.lastName);
+      if (employee.middleName) await this.#fillMiddleName(employee.middleName);
+      if (employee.employeeId) await this.#fillEmployeeId(employee.employeeId);
+      await this.#save();
+    });
     return this;
   }
 }

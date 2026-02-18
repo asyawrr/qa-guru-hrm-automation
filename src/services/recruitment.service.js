@@ -1,3 +1,4 @@
+import { test } from '@playwright/test';
 import { ApiClient } from './api-client.js';
 
 export class RecruitmentService {
@@ -6,8 +7,10 @@ export class RecruitmentService {
   }
 
   async getVacancies(params = {}) {
-    const response = await this.client.get('/recruitment/vacancies', { params });
-    return response;
+    return test.step('API: get vacancies', async () => {
+      const response = await this.client.get('/recruitment/vacancies', { params });
+      return response;
+    });
   }
 
   async createVacancy(vacancy) {
@@ -21,12 +24,16 @@ export class RecruitmentService {
   }
 
   async createCandidate(candidate) {
-    const response = await this.client.post('/recruitment/candidates', candidate);
-    return response;
+    return test.step('API: create candidate', async () => {
+      const response = await this.client.post('/recruitment/candidates', candidate);
+      return response;
+    });
   }
 
   async getCandidate(id) {
-    const response = await this.client.get(`/recruitment/candidates/${id}`);
-    return response;
+    return test.step('API: get candidate by id', async () => {
+      const response = await this.client.get(`/recruitment/candidates/${id}`);
+      return response;
+    });
   }
 }

@@ -28,13 +28,13 @@ Tests run on your host; OrangeHRM runs in Docker. Use this when you develop or d
 
 **Configure environment for local runs**
 
-Create `.env` in the project root (or copy from `.env.test` and adjust). Point to the app on localhost:
+Copy `.env.test.example` to `.env` (or `.env.test`) and fill in the variables. For local runs against the app on the host, use for example:
 
 ```bash
 BASE_URL=http://localhost:8080
 API_BASE_URL=http://localhost:8080/web/index.php/api/v2
-TEST_USER_USERNAME=Admin
-TEST_USER_PASSWORD=Admin123!-Admin123!
+TEST_USER_USERNAME=<your test user>
+TEST_USER_PASSWORD=<your test password>
 ```
 
 **Start OrangeHRM (Docker)**
@@ -93,7 +93,7 @@ Tests run inside the `tests` container; OrangeHRM and DB run in Docker. Use this
 
 **Configure environment for Docker**
 
-The `tests` service uses `.env.test` by default. Ensure it points to the OrangeHRM service by hostname:
+Copy `.env.test.example` to `.env.test` and set the variables. The `tests` service loads them from `.env.test` via `env_file`. For Docker runs, use the OrangeHRM service hostname, e.g.:
 
 ```bash
 BASE_URL=http://orangehrm:80

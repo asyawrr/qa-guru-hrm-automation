@@ -1,3 +1,4 @@
+import { test } from '@playwright/test';
 import { env } from '../config/env.js';
 
 /*
@@ -24,25 +25,27 @@ export class AuthService {
     Login: GET login page → retrieve token → POST login + password + token.
   */
   async loginWithForm(username, password) {
-    const loginPageUrl = `${env.BASE_URL}/web/index.php/auth/login`;
+    return test.step('API: log in with form', async () => {
+      const loginPageUrl = `${env.BASE_URL}/web/index.php/auth/login`;
 
-    const loginPageResponse = await this.request.get(loginPageUrl);
-    const html = await loginPageResponse.text();
-    const token = this._getCsrfTokenFromHtml(html);
+      const loginPageResponse = await this.request.get(loginPageUrl);
+      const html = await loginPageResponse.text();
+      const token = this._getCsrfTokenFromHtml(html);
 
-    const response = await this.request.post(this.loginUrl, {
-      form: {
-        _token: token,
-        username,
-        password,
-      },
-      headers: {
-        Referer: loginPageUrl,
-        Origin: new URL(env.BASE_URL).origin,
-      },
-      failOnStatusCode: false,
+      const response = await this.request.post(this.loginUrl, {
+        form: {
+          _token: token,
+          username,
+          password,
+        },
+        headers: {
+          Referer: loginPageUrl,
+          Origin: new URL(env.BASE_URL).origin,
+        },
+        failOnStatusCode: false,
+      });
+
+      return response;
     });
-
-    return response;
   }
 }

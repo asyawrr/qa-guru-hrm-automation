@@ -1,9 +1,10 @@
+import { test } from '@playwright/test';
 import { BasePage } from '../base.page.js';
 
 export class VacanciesPage extends BasePage {
   constructor(page) {
     super(page, '/recruitment/viewJobVacancy');
-    
+
     this.addButton = page.getByRole('button', { name: 'Add' });
     this.bulkDeleteCancelButton = page.getByRole('button', { name: 'No, Cancel' });
     this.bulkDeleteModal = page.getByText(/Are you Sure\?/);
@@ -22,82 +23,118 @@ export class VacanciesPage extends BasePage {
   }
 
   async filterByJobTitle(jobTitleText) {
-    await this.filterJobTitleDropdown.click();
-    await this.page.getByRole('option', { name: new RegExp(jobTitleText, 'i') }).click();
-    await this.searchButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await test.step('Filter vacancies by job title', async () => {
+      await this.filterJobTitleDropdown.click();
+      await this.page.getByRole('option', { name: new RegExp(jobTitleText, 'i') }).click();
+      await this.searchButton.click();
+      await this.page.waitForLoadState('networkidle');
+    });
     return this;
   }
 
-  async selectAllVacancies() {
+  #getVacancyRowLocator(vacancyName) {
+    return this.table.locator('.oxd-table-card').filter({ hasText: vacancyName });
+  }
+
+  async #clickEditForVacancy(vacancyName) {
+    await this.#getVacancyRowLocator(vacancyName).getByRole('button').nth(1).click();
+    return this;
+  }
+
+  async #clickDeleteForVacancy(vacancyName) {
+    await this.#getVacancyRowLocator(vacancyName).getByRole('button').first().click();
+    return this;
+  }
+
+  async #confirmDelete() {
+    await this.deleteConfirmButton.click();
+    return this;
+  }
+
+  async #selectAllVacancies() {
     await this.selectAllCheckbox.waitFor({ state: 'visible', timeout: 10000 });
     await this.selectAllCheckbox.scrollIntoViewIfNeeded();
     await this.selectAllCheckbox.click({ force: true });
     return this;
   }
 
-  async clickDeleteSelected() {
+  async #clickDeleteSelected() {
     await this.deleteSelectedButton.waitFor({ state: 'visible', timeout: 10000 });
     await this.deleteSelectedButton.click();
     return this;
   }
 
-  async confirmBulkDelete() {
+  async #confirmBulkDelete() {
     await this.deleteConfirmButton.click();
     return this;
   }
 
-  getVacancyRowLocator(vacancyName) {
-    return this.table.locator('.oxd-table-card').filter({ hasText: vacancyName });
-  }
-
-  async clickEditForVacancy(vacancyName) {
-    await this.getVacancyRowLocator(vacancyName).getByRole('button').nth(1).click();
-    return this;
-  }
-
-  async clickDeleteForVacancy(vacancyName) {
-    await this.getVacancyRowLocator(vacancyName).getByRole('button').first().click();
-    return this;
-  }
-
-  async confirmDelete() {
-    await this.deleteConfirmButton.click();
-    return this;
-  }
-
-  async open() {
-    await this.goto();
-    return this;
-  }
-
-  async addVacancy(vacancy) {
-    await this.addButton.click();
-    await this.page.waitForURL(/\/recruitment\/addJobVacancy/, { timeout: 15000 });
-    await this.vacancyNameInput.waitFor({ state: 'visible', timeout: 15000 });
-    await this.vacancyNameInput.fill(vacancy.name);
-    if (vacancy.jobTitle) await this.selectJobTitle(vacancy.jobTitle);
-    if (vacancy.hiringManager) await this.selectHiringManager(vacancy.hiringManager);
-    if (vacancy.numberOfPositions != null) {
-      await this.numberOfPositionsInput.fill(String(vacancy.numberOfPositions));
-    }
-    if (vacancy.description) await this.descriptionInput.fill(vacancy.description);
-    await this.saveButton.click();
-    return this;
-  }
-
-  async selectJobTitle(jobTitleText) {
+  async #selectJobTitle(jobTitleText) {
     await this.jobTitleDropdown.click();
     await this.page.getByRole('option', { name: new RegExp(jobTitleText, 'i') }).click();
     return this;
   }
 
-  async selectHiringManager(managerName) {
+  async #selectHiringManager(managerName) {
     await this.hiringManagerInput.click();
     await this.hiringManagerInput.fill(managerName);
     const option = this.page.getByRole('option', { name: managerName });
     await option.waitFor({ state: 'visible', timeout: 10000 });
     await option.click();
+    return this;
+  }
+
+  async open() {
+    await test.step('Open vacancies page', async () => {
+      await this.goto();
+    });
+    return this;
+  }
+
+  async addVacancy(vacancy) {
+    await test.step(`Add vacancy: ${vacancy.name}`, async () => {
+      await this.addButton.click();
+      await this.page.waitForURL(/\/recruitment\/addJobVacancy/, { timeout: 15000 });
+      await this.vacancyNameInput.waitFor({ state: 'visible', timeout: 15000 });
+      await this.vacancyNameInput.fill(vacancy.name);
+      if (vacancy.jobTitle) await this.#selectJobTitle(vacancy.jobTitle);
+      if (vacancy.hiringManager) await this.#selectHiringManager(vacancy.hiringManager);
+      if (vacancy.numberOfPositions != null) {
+        await this.numberOfPositionsInput.fill(String(vacancy.numberOfPositions));
+      }
+      if (vacancy.description) await this.descriptionInput.fill(vacancy.description);
+      await this.saveButton.click();
+    });
+    return this;
+  }
+
+  async editVacancyName(currentName, newName) {
+    await test.step('Edit vacancy name', async () => {
+      await this.#clickEditForVacancy(currentName);
+      await this.page.waitForURL(/\/recruitment\/addJobVacancy\/\d+/);
+      await this.page.waitForLoadState('networkidle');
+      await this.vacancyNameInput.waitFor({ state: 'visible'});
+      await this.vacancyNameInput.clear();
+      await this.vacancyNameInput.fill(newName);
+      await this.saveButton.click();
+    });
+    return this;
+  }
+
+  async deleteVacancy(name) {
+    await test.step('Delete vacancy', async () => {
+      await this.#clickDeleteForVacancy(name);
+      await this.#confirmDelete();
+    });
+    return this;
+  }
+
+  async bulkDeleteFilteredVacancies() {
+    await test.step('Bulk delete vacancies', async () => {
+      await this.#selectAllVacancies();
+      await this.#clickDeleteSelected();
+      await this.#confirmBulkDelete();
+    });
     return this;
   }
 

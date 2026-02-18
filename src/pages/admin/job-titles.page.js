@@ -1,3 +1,4 @@
+import { test } from '@playwright/test';
 import { BasePage } from '../base.page.js';
 
 /**
@@ -17,38 +18,43 @@ export class JobTitlesPage extends BasePage {
   }
 
   async open() {
-    await this.goto();
+    await test.step('Open job titles page', async () => {
+      await this.goto();
+    });
     return this;
   }
 
-  async clickAdd() {
+  async #clickAdd() {
     await this.addButton.click();
     return this;
   }
 
-  async fillJobTitle(title) {
+  async #fillJobTitle(title) {
     await this.jobTitleInput.click();
     await this.jobTitleInput.fill(title);
     return this;
   }
 
-  async fillJobDescription(description) {
+  async #fillJobDescription(description) {
     await this.jobDescriptionInput.click();
     await this.jobDescriptionInput.fill(description);
     return this;
   }
 
-  async save() {
+  async #save() {
     await this.saveButton.click();
     return this;
   }
 
   async addJobTitle(data) {
-    await this.clickAdd();
-    await this.jobTitleInput.waitFor({ state: 'visible'});
-    await this.fillJobTitle(data.title);
-    if (data.description) await this.fillJobDescription(data.description);
-    await this.save();
+    await test.step(`Add job title: ${data.title}`, async () => {
+      await this.#clickAdd();
+      await this.jobTitleInput.waitFor({ state: 'visible' });
+      await this.#fillJobTitle(data.title);
+      if (data.description) await this.#fillJobDescription(data.description);
+      await this.#save();
+      await this.successToast.waitFor({ state: 'visible', timeout: 10000 });
+    });
     return this;
   }
 

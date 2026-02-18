@@ -54,9 +54,17 @@ The project runs the application via **Docker** (MariaDB + OrangeHRM image). Tes
 | API | Recruitment | Create candidate via API |
 | API | Recruitment | Get candidate by id after create |
 
+## Environment / Configuration
+
+Tests read `BASE_URL`, `API_BASE_URL`, `TEST_USER_USERNAME`, and `TEST_USER_PASSWORD` from `.env` or `.env.test`. Do not commit real credentials.
+
+1. Copy `.env.test.example` to `.env` or `.env.test`.
+2. Set the variables for your environment (e.g. `BASE_URL=http://localhost:8080` for local runs against the app on the host).
+3. `.env` and `.env.test` are in `.gitignore`; keep them out of the repository.
+
 ## Running tests
 
-Ensure OrangeHRM is running (e.g. via Docker) and the installer has been executed. Use `.env` or `.env.test` with `BASE_URL`, `API_BASE_URL`, `TEST_USER_USERNAME`, `TEST_USER_PASSWORD`. For local runs against the app on the host, use `BASE_URL=http://localhost:8080`.
+Ensure OrangeHRM is running (e.g. via Docker) and the installer has been executed.
 
 Run all tests:
 
