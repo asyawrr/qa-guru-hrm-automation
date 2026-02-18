@@ -53,7 +53,7 @@ export class JobTitlesPage extends BasePage {
       await this.#fillJobTitle(data.title);
       if (data.description) await this.#fillJobDescription(data.description);
       await this.#save();
-      await this.successToast.waitFor({ state: 'visible', timeout: 10000 });
+      await this.successToast.waitFor({ state: 'visible'});
     });
     return this;
   }
