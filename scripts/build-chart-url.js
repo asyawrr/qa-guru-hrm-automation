@@ -3,7 +3,7 @@ const CHART_COLORS = {
   failed: '#ef4444',
   broken: '#eab308',
   skipped: '#94a3b8',
-  unknown: '#a855f7',
+  unknown: '#a855f7'
 };
 
 /**
@@ -28,9 +28,9 @@ export function buildChartUrl(stats) {
         {
           data,
           backgroundColor: colors,
-          borderWidth: 0,
-        },
-      ],
+          borderWidth: 0
+        }
+      ]
     },
     options: {
       cutout: '65%',
@@ -42,26 +42,26 @@ export function buildChartUrl(stats) {
           labels: {
             usePointStyle: true,
             padding: 10,
-            font: { size: 12 },
-          },
+            font: { size: 12 }
+          }
         },
         doughnutlabel: {
           labels: [
             { text: String(total), font: { size: 24 }, color: '#1e293b' },
-            { text: 'Total scenarios', font: { size: 11 }, color: '#64748b' },
-          ],
+            { text: 'Total scenarios', font: { size: 11 }, color: '#64748b' }
+          ]
         },
         datalabels: {
           display: true,
           color: '#1e293b',
-          font: { size: 11, weight: 'bold' },
+          font: { size: 11, weight: 'bold' }
         },
         tickFormat: {
           suffix: '%',
-          applyToDataLabels: true,
-        },
-      },
-    },
+          applyToDataLabels: true
+        }
+      }
+    }
   };
 
   const encoded = encodeURIComponent(JSON.stringify(chartConfig));

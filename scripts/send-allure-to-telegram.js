@@ -61,12 +61,7 @@ function buildCaption(summary, stats, options = {}) {
   const reportLink = options.reportLink ?? 'https://asyawrr.github.io/qa-guru-hrm-automation/';
 
   const pct = (n) => (total > 0 ? ((n / total) * 100).toFixed(1) : '0');
-  const lines = [
-    `*${project}*`,
-    '',
-    '*Results:*',
-    `Environment: ${environment}`,
-  ];
+  const lines = [`*${project}*`, '', '*Results:*', `Environment: ${environment}`];
   if (options.comment) lines.push(`Comment: ${options.comment}`);
   lines.push(
     `Duration: ${formatDurationMs(duration)}`,
@@ -90,12 +85,12 @@ async function sendPhotoToTelegram(token, chatId, photoUrl, caption) {
     photo: photoUrl,
     caption,
     parse_mode: 'Markdown',
-    disable_web_page_preview: true,
+    disable_web_page_preview: true
   };
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   });
   if (!res.ok) {
     const err = await res.text();
@@ -117,7 +112,7 @@ async function main() {
     project: process.env.ALLURE_PROJECT,
     environment: process.env.ALLURE_ENV,
     comment: process.env.ALLURE_COMMENT,
-    reportLink: process.env.ALLURE_REPORT_LINK,
+    reportLink: process.env.ALLURE_REPORT_LINK
   });
 
   await sendPhotoToTelegram(token, chat, chartUrl, caption);

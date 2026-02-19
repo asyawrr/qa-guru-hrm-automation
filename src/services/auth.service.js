@@ -36,13 +36,13 @@ export class AuthService {
         form: {
           _token: token,
           username,
-          password,
+          password
         },
         headers: {
           Referer: loginPageUrl,
-          Origin: new URL(env.BASE_URL).origin,
+          Origin: new URL(env.BASE_URL).origin
         },
-        failOnStatusCode: false,
+        failOnStatusCode: false
       });
 
       return response;

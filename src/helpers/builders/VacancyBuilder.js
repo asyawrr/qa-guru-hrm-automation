@@ -9,7 +9,7 @@ export class VacancyBuilder {
       hiringManager: null,
       jobTitle: null,
       name: `Vacancy ${faker.person.jobTitle()}`,
-      numberOfPositions: String(faker.number.int({ min: 1, max: 5 })),
+      numberOfPositions: String(faker.number.int({ min: 1, max: 5 }))
     };
   }
 

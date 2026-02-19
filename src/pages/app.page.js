@@ -3,7 +3,6 @@ import { VacanciesPage } from './recruitment/index.js';
 import { JobTitlesPage } from './admin/index.js';
 import { EmployeeAddPage, PersonalDetailsPage } from './pim/index.js';
 
-
 export class App {
   constructor(page) {
     this.page = page;

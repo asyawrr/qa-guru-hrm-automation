@@ -13,7 +13,10 @@ export class PersonalDetailsPage extends BasePage {
     this.middleNameInput = page.getByRole('textbox', { name: 'Middle Name' }).first();
     this.nationalityDropdown = page.locator('.oxd-select-text').first();
     this.nicknameInput = page.getByRole('textbox', { name: 'Nickname' }).first();
-    this.otherIdInput = page.locator('input').filter({ has: page.locator('[name="otherId"]') }).first();
+    this.otherIdInput = page
+      .locator('input')
+      .filter({ has: page.locator('[name="otherId"]') })
+      .first();
     this.toast = page.locator('.oxd-toast');
   }
 

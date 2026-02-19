@@ -4,7 +4,7 @@ export class JobTitleBuilder {
   constructor() {
     this._data = {
       description: faker.lorem.sentence(),
-      title: `Job ${faker.person.jobTitle()}`,
+      title: `Job ${faker.person.jobTitle()}`
     };
   }
 

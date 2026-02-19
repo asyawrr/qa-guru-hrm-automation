@@ -12,7 +12,6 @@ export class JobTitlesPage extends BasePage {
     this.addButton = page.getByRole('button', { name: /Add/ });
     this.jobTitleInput = page.getByRole('textbox').nth(1);
     this.jobDescriptionInput = page.getByRole('textbox', { name: 'Type description here' });
-    this.jobTitleInput = page.getByRole('textbox').nth(1);
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.table = page.locator('.oxd-table');
   }
@@ -53,7 +52,7 @@ export class JobTitlesPage extends BasePage {
       await this.#fillJobTitle(data.title);
       if (data.description) await this.#fillJobDescription(data.description);
       await this.#save();
-      await this.successToast.waitFor({ state: 'visible'});
+      await this.successToast.waitFor({ state: 'visible' });
     });
     return this;
   }

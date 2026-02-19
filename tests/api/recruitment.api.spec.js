@@ -23,7 +23,7 @@ test.describe('API Recruitment', () => {
     const payload = {
       firstName: candidateData.firstName,
       lastName: candidateData.lastName,
-      email: candidateData.email,
+      email: candidateData.email
     };
     if (firstVacancyId != null) payload.vacancyId = firstVacancyId;
 
@@ -48,7 +48,7 @@ test.describe('API Recruitment', () => {
     const payload = {
       firstName: candidateData.firstName,
       lastName: candidateData.lastName,
-      email: candidateData.email,
+      email: candidateData.email
     };
     if (firstVacancyId != null) payload.vacancyId = firstVacancyId;
 
@@ -56,7 +56,11 @@ test.describe('API Recruitment', () => {
     expect(createRes.ok(), `Create failed: ${createRes.status()}`).toBeTruthy();
 
     const createBody = await createRes.json().catch(() => ({}));
-    const id = createBody.data?.id ?? createBody.data?.candidateId ?? createBody.id ?? createBody.candidateId;
+    const id =
+      createBody.data?.id ??
+      createBody.data?.candidateId ??
+      createBody.id ??
+      createBody.candidateId;
     expect(id, `No id in response: ${JSON.stringify(createBody)}`).toBeDefined();
 
     const getRes = await recruitmentService.getCandidate(id);

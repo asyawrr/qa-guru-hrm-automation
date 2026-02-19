@@ -15,7 +15,7 @@ export class PersonalDetailsBuilder {
       nickname: faker.person.firstName(),
       otherId: faker.string.alphanumeric(6),
       sinNumber: '',
-      smoker: false,
+      smoker: false
     };
   }
 

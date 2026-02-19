@@ -1,3 +1,4 @@
+import { test } from '@playwright/test';
 import { BasePage } from './base.page.js';
 
 export class DashboardPage extends BasePage {
@@ -9,8 +10,9 @@ export class DashboardPage extends BasePage {
   }
 
   async open() {
-    await this.goto();
-    return this;
+    test.step('Open dashboard', async () => {
+      await this.goto();
+    });
   }
 
   async goToPim() {

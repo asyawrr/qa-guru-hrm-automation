@@ -30,6 +30,8 @@ Tests run on your host; OrangeHRM runs in Docker. Use this when you develop or d
 
 Copy `.env.test.example` to `.env` (or `.env.test`) and fill in the variables. For local runs against the app on the host, use for example:
 
+> **Warning:** Do not commit `.env` or `.env.test` files with real credentials. These files are in `.gitignore`. Use only the example template.
+
 ```bash
 BASE_URL=http://localhost:8080
 API_BASE_URL=http://localhost:8080/web/index.php/api/v2

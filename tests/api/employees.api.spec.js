@@ -3,7 +3,10 @@ import { EmployeeBuilder } from '../../src/helpers/builders/index.js';
 
 test.describe('API Employees', () => {
   test('Create employee via API', async ({ employeeService }) => {
-    const employeeData = new EmployeeBuilder().withFirstName('Api').withLastName('Employee').build();
+    const employeeData = new EmployeeBuilder()
+      .withFirstName('Api')
+      .withLastName('Employee')
+      .build();
 
     const response = await employeeService.create(employeeData);
     const body = await response.json().catch(() => ({}));

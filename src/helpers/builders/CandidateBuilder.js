@@ -10,7 +10,7 @@ export class CandidateBuilder {
       email: faker.internet.email(),
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
-      vacancyId: null,
+      vacancyId: null
     };
   }
 

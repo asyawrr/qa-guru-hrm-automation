@@ -11,7 +11,10 @@ export class VacanciesPage extends BasePage {
     this.deleteConfirmButton = page.getByRole('button', { name: 'Yes, Delete' });
     this.deleteSelectedButton = page.getByRole('button', { name: /Delete Selected/ });
     this.descriptionInput = page.locator('textarea');
-    this.filterJobTitleDropdown = page.locator('.oxd-table-filter form .oxd-grid-item').first().locator('.oxd-select-text');
+    this.filterJobTitleDropdown = page
+      .locator('.oxd-table-filter form .oxd-grid-item')
+      .first()
+      .locator('.oxd-select-text');
     this.hiringManagerInput = page.getByRole('textbox', { name: 'Type for hints...' });
     this.jobTitleDropdown = page.locator('form i').first();
     this.numberOfPositionsInput = page.getByRole('textbox').nth(4);
@@ -19,7 +22,10 @@ export class VacanciesPage extends BasePage {
     this.searchButton = page.getByRole('button', { name: 'Search' });
     this.selectAllCheckbox = page.locator('.oxd-table-header .oxd-checkbox-input');
     this.table = page.locator('.oxd-table');
-    this.vacancyNameInput = page.locator('.orangehrm-card-container form .oxd-grid-item').first().getByRole('textbox');
+    this.vacancyNameInput = page
+      .locator('.orangehrm-card-container form .oxd-grid-item')
+      .first()
+      .getByRole('textbox');
   }
 
   async filterByJobTitle(jobTitleText) {
@@ -113,7 +119,7 @@ export class VacanciesPage extends BasePage {
       await this.#clickEditForVacancy(currentName);
       await this.page.waitForURL(/\/recruitment\/addJobVacancy\/\d+/);
       await this.page.waitForLoadState('networkidle');
-      await this.vacancyNameInput.waitFor({ state: 'visible'});
+      await this.vacancyNameInput.waitFor({ state: 'visible' });
       await this.vacancyNameInput.clear();
       await this.vacancyNameInput.fill(newName);
       await this.saveButton.click();

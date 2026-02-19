@@ -46,7 +46,7 @@ export const test = base.extend({
 
   recruitmentService: async ({ authenticatedRequest }, use) => {
     await use(new RecruitmentService(authenticatedRequest));
-  },
+  }
 });
 
 export { expect };

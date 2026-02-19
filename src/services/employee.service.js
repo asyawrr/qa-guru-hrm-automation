@@ -12,7 +12,7 @@ export class EmployeeService {
         firstName: employee.firstName,
         lastName: employee.lastName,
         middleName: employee.middleName || '',
-        employeeId: employee.employeeId || '',
+        employeeId: employee.employeeId || ''
       });
       return response;
     });
@@ -27,7 +27,7 @@ export class EmployeeService {
 
   async delete(empNumber) {
     const response = await this.client.delete(`/pim/employees`, {
-      params: { ids: [empNumber] },
+      params: { ids: [empNumber] }
     });
     return response;
   }

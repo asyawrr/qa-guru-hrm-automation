@@ -14,7 +14,7 @@ export class ApiClient {
     const url = path.startsWith('http') ? path : `${this.baseURL}${path}`;
     return this.request.get(url, {
       headers: { Accept: 'application/json', ...options.headers },
-      ...options,
+      ...options
     });
   }
 
@@ -22,8 +22,12 @@ export class ApiClient {
     const url = path.startsWith('http') ? path : `${this.baseURL}${path}`;
     return this.request.post(url, {
       data,
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...options.headers },
-      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        ...options.headers
+      },
+      ...options
     });
   }
 
@@ -31,8 +35,12 @@ export class ApiClient {
     const url = path.startsWith('http') ? path : `${this.baseURL}${path}`;
     return this.request.put(url, {
       data,
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...options.headers },
-      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        ...options.headers
+      },
+      ...options
     });
   }
 
@@ -40,7 +48,7 @@ export class ApiClient {
     const url = path.startsWith('http') ? path : `${this.baseURL}${path}`;
     return this.request.delete(url, {
       headers: { Accept: 'application/json', ...options.headers },
-      ...options,
+      ...options
     });
   }
 }

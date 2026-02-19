@@ -38,21 +38,21 @@ The project runs the application via **Docker** (MariaDB + OrangeHRM image). Tes
 
 ## Test cases
 
-| Type | Block | Test case |
-|------|-------|-----------|
-| UI | Authorization | Login with valid credentials and land on dashboard |
-| UI | Authorization | Show error on invalid credentials |
-| UI | PIM (Admin / Job Titles) | Create job title in admin panel |
-| UI | Recruitment | Create vacancy |
-| UI | Recruitment | Edit vacancy |
-| UI | Recruitment | Delete vacancy |
-| UI | Recruitment | Bulk delete vacancies |
-| API | Authorization | Get login page and have session cookie after login |
-| API | PIM (Employees) | Create employee via API |
-| API | PIM (Employees) | Get employee by id after create |
-| API | Recruitment | Get vacancies list via API |
-| API | Recruitment | Create candidate via API |
-| API | Recruitment | Get candidate by id after create |
+| Type | Block                    | Test case                                          |
+| ---- | ------------------------ | -------------------------------------------------- |
+| UI   | Authorization            | Login with valid credentials and land on dashboard |
+| UI   | Authorization            | Show error on invalid credentials                  |
+| UI   | PIM (Admin / Job Titles) | Create job title in admin panel                    |
+| UI   | Recruitment              | Create vacancy                                     |
+| UI   | Recruitment              | Edit vacancy                                       |
+| UI   | Recruitment              | Delete vacancy                                     |
+| UI   | Recruitment              | Bulk delete vacancies                              |
+| API  | Authorization            | Get login page and have session cookie after login |
+| API  | PIM (Employees)          | Create employee via API                            |
+| API  | PIM (Employees)          | Get employee by id after create                    |
+| API  | Recruitment              | Get vacancies list via API                         |
+| API  | Recruitment              | Create candidate via API                           |
+| API  | Recruitment              | Get candidate by id after create                   |
 
 ## Environment / Configuration
 
@@ -60,6 +60,8 @@ Tests read `BASE_URL`, `API_BASE_URL`, `TEST_USER_USERNAME`, and `TEST_USER_PASS
 
 1. Copy `.env.test.example` to `.env` or `.env.test`.
 2. Set the variables for your environment (e.g. `BASE_URL=http://localhost:8080` for local runs against the app on the host).
+
+> **Warning:** Do not commit `.env` or `.env.test` files with real credentials. Use only the example template (`.env.test.example`) in the repository. In CI, credentials are passed via GitHub Secrets.
 
 ## Running tests
 
@@ -135,7 +137,7 @@ npm run report
 
 Workflow **CI playwright tests** (`.github/workflows/ci.yml`) runs on push and pull requests to `main` and on `workflow_dispatch`.
 
-Steps: 
+Steps:
 Сheckout → install and configure allurectl (Allure TestOps) → start `db` and `orangehrm` with Docker Compose → wait for OrangeHRM → run CLI installer → `npm ci` → Playwright install → run tests in Docker with mounted `allure-results`, `test-results`, `playwright-report` → upload results to Allure TestOps → generate Allure single-file report → upload artifact (allure-report, allure-results, playwright-report) → deploy Allure report to GitHub Pages (on push to main or workflow_dispatch) → send Telegram notification.
 
 Required repository secrets: `ALLURE_ENDPOINT`, `ALLURE_PROJECT_ID`, `ALLURE_TOKEN`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
@@ -153,7 +155,6 @@ Required repository secrets: `ALLURE_ENDPOINT`, `ALLURE_PROJECT_ID`, `ALLURE_TOK
 **Telegram** — The notification includes project name, environment, duration, total/passed/failed/broken/skipped counts, a link to the report (e.g. GitHub Pages), and a donut chart (QuickChart) built from the summary. Implemented in `scripts/send-allure-to-telegram.js` and `scripts/build-chart-url.js`.
 
 <img width="596" height="584" alt="SCR-20260214-onot" src="https://github.com/user-attachments/assets/1a52542d-1a4c-42ae-ac6b-8c996b2fb4dd" />
-
 
 ## How to run
 

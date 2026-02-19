@@ -6,7 +6,7 @@ export class EmployeeBuilder {
       employeeId: null,
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
-      middleName: '',
+      middleName: ''
     };
   }
 
