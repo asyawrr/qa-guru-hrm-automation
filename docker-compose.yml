@@ -31,7 +31,9 @@ services:
 
   tests:
     build: .
-    env_file: .env.test
+    env_file:
+      - path: .env.test
+        required: false
     environment:
       - BASE_URL
       - API_BASE_URL
