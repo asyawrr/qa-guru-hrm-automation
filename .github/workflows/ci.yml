@@ -76,6 +76,10 @@ jobs:
           docker compose build tests
 
           docker compose run --rm \
+            -e BASE_URL \
+            -e API_BASE_URL \
+            -e TEST_USER_USERNAME \
+            -e TEST_USER_PASSWORD \
             -v $PWD/allure-results:/app/allure-results \
             -v $PWD/test-results:/app/test-results \
             -v $PWD/playwright-report:/app/playwright-report \

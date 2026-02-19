@@ -34,11 +34,6 @@ services:
     env_file:
       - path: .env.test
         required: false
-    environment:
-      - BASE_URL
-      - API_BASE_URL
-      - TEST_USER_USERNAME
-      - TEST_USER_PASSWORD
     depends_on:
       - orangehrm
 

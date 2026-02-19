@@ -10,9 +10,10 @@ export class DashboardPage extends BasePage {
   }
 
   async open() {
-    test.step('Open dashboard', async () => {
+    await test.step('Open dashboard', async () => {
       await this.goto();
     });
+    return this;
   }
 
   async goToPim() {
